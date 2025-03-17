@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Modifiers;
+
+use App\CoreModifier;
+
+class CoreGroup extends CoreModifier
+{
+    protected string $block_name = 'core/group';
+    protected array $styles = [
+        [
+            'name' => 'group-default',
+            'label' => 'Default',
+            'isDefault' => true,
+        ],
+        [
+            'name' => 'cta-section',
+            'label' => 'CTA Section',
+        ],
+        [
+            'name' => 'hide-on-mobile',
+            'label' => 'Hide on Mobile',
+        ],
+        [
+            'name' => 'hide-on-desktop',
+            'label' => 'Hide on Desktop',
+        ],
+    ];
+}

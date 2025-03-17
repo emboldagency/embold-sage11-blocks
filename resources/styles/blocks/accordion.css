@@ -1,0 +1,23 @@
+summary::-webkit-details-marker,
+summary::marker {
+    @apply hidden;
+}
+
+summary {
+    @apply list-none cursor-pointer transition-all;
+    h3 {
+        @apply flex items-center justify-between;
+        &::after {
+            content: '';
+            background-image: url('../images/icons/accordion-arrow.svg');
+            @apply ml-6 bg-no-repeat bg-center inline-block w-10 h-10 mr-2 rotate-180 transition-all;
+        }
+    }
+}
+
+details[open] summary {
+    @apply mb-3;
+    h3::after {
+        @apply rotate-0;
+    }
+}
