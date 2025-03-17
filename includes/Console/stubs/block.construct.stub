@@ -1,0 +1,123 @@
+<?php
+
+namespace DummyNamespace;
+
+use Log1x\AcfComposer\AcfComposer;
+use App\CustomBlock;
+use Log1x\AcfComposer\Builder;
+
+class DummyClass extends CustomBlock
+{
+  /**
+   * The block attributes.
+   */
+  public function attributes(): array
+  {
+    return [
+      'name' => __('DummyTitle', 'sage'),
+      'description' => __('A simple DummyTitle block.', 'sage'),
+      'category' => 'embold',
+      'icon' => 'editor-ul',
+      'keywords' => [],
+      'post_types' => [],
+      'parent' => [],
+      'ancestor' => [],
+      'mode' => 'preview',
+      'align' => '',
+      'align_text' => '',
+      'align_content' => '',
+      'supports' => [
+        'align' => true,
+        'alignContent' => false,
+        'alignText' => false,
+        'anchor' => false,
+        'fullHeight' => false,
+        'anchor' => false,
+        'mode' => true,
+        'multiple' => true,
+        'jsx' => true,
+        'background' => [
+            'backgroundImage' => false,
+            'backgroundSize' => false,
+        ],
+        'color' => [
+            'background' => true,
+            'enableContrastChecker' => true,
+            'gradients' => true,
+            'text' => true,
+        ],
+        'spacing' => [
+            'padding' => true,
+            'margin' => true,
+        ],
+        'typography' => [
+            'letterSpacing' => true,
+            'lineHeight' => true,
+            'fontSize' => true,
+        ],
+      ],
+      'styles' => [],
+      'template' => [
+        'core/heading' => ['placeholder' => 'Hello World'],
+        'core/paragraph' => ['placeholder' => 'Welcome to the DummyTitle block.'],
+      ],
+    ];
+  }
+
+  /**
+   * The example data.
+   */
+  public function example(): array
+  {
+    return [
+      'items' => [
+        ['item' => 'Item one'],
+        ['item' => 'Item two'],
+        ['item' => 'Item three'],
+      ],
+    ];
+  }
+
+  /**
+   * Data to be passed to the block before rendering.
+   */
+  public function with(): array
+  {
+    return [
+      'items' => $this->items(),
+    ];
+  }
+
+  /**
+   * The block field group.
+   */
+  public function fields(): array
+  {
+    $DummyCamel = Builder::make('DummySnake');
+
+    $DummyCamel
+      ->addRepeater('items')
+      ->addText('item')
+      ->endRepeater();
+
+    return $DummyCamel->build();
+  }
+
+  /**
+   * Return the items field.
+   *
+   * @return array
+   */
+  public function items()
+  {
+    return get_field('items') ?: $this->example['items'];
+  }
+
+  /**
+   * Assets enqueued when rendering the block.
+   */
+  public function assets(array $block): void
+  {
+    //
+  }
+}
