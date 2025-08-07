@@ -130,6 +130,7 @@ class ComposerStaticInit831b6e4123faf31969d68936cbad55ee
             'Illuminate\\Config\\' => 18,
             'Illuminate\\Cache\\' => 17,
             'Illuminate\\Bus\\' => 15,
+            'Illuminate\\Auth\\' => 16,
             'Illuminate\\' => 11,
         ),
         'G' => 
@@ -448,6 +449,10 @@ class ComposerStaticInit831b6e4123faf31969d68936cbad55ee
         'Illuminate\\Bus\\' => 
         array (
             0 => __DIR__ . '/..' . '/illuminate/bus',
+        ),
+        'Illuminate\\Auth\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/auth',
         ),
         'Illuminate\\' => 
         array (

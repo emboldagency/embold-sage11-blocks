@@ -4,7 +4,7 @@
  * Plugin Name:        emBold Sage11 Blocks
  * Plugin URI:         https://github.com/emboldagency/embold-sage11-blocks
  * Description:        A collection of Tailwind Blocks for Sage 11 based themes. Requires Advanced Custom Fields PRO plugin to be enabled and activated.
- * Version:            0.1.0
+ * Version:            0.1.1
  * Author:             emBold
  * Author URI:         https://embold.com/
  * Primary Branch:     master

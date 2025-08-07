@@ -15,15 +15,20 @@ use WP_CLI;
 trait Bootable
 {
     /**
-     * Boot the application's service providers.
-     *
-     * @return $this
+     * The configuration used to boot the application.
      */
-    public function bootAcorn()
+    protected array $bootConfiguration = [];
+
+    /**
+     * Boot the application and handle the request.
+     */
+    public function bootAcorn(array $bootConfiguration = []): static
     {
         if ($this->isBooted()) {
             return $this;
         }
+
+        $this->bootConfiguration = $bootConfiguration;
 
         if (! defined('LARAVEL_START')) {
             define('LARAVEL_START', microtime(true));
@@ -32,7 +37,11 @@ trait Bootable
         if ($this->runningInConsole()) {
             $this->enableHttpsInConsole();
 
-            class_exists('WP_CLI') ? $this->bootWpCli() : $this->bootConsole();
+            if (class_exists('WP_CLI')) {
+                $this->bootWpCli();
+            } elseif (defined('USING_ACORN_CLI') && USING_ACORN_CLI) {
+                $this->bootConsole();
+            }
 
             return $this;
         }
@@ -68,9 +77,9 @@ trait Bootable
         $kernel->bootstrap();
 
         WP_CLI::add_command('acorn', function ($args, $options) use ($kernel) {
-            $kernel->commands();
+            $escaped = array_map(fn ($arg) => escapeshellarg($arg), $args);
 
-            $command = implode(' ', $args);
+            $command = implode(' ', $escaped);
 
             foreach ($options as $key => $value) {
                 if ($key === 'interaction' && $value === false) {
@@ -82,7 +91,7 @@ trait Bootable
                 $command .= " --{$key}";
 
                 if ($value !== true) {
-                    $command .= "='{$value}'";
+                    $command .= '='.escapeshellarg($value);
                 }
             }
 
@@ -166,6 +175,7 @@ trait Bootable
 
             $response->setContent($content);
         }))
+            ->middleware('wordpress')
             ->where('any', '.*')
             ->name('wordpress');
     }
@@ -214,8 +224,6 @@ trait Bootable
             return;
         }
 
-        $route->middleware('wordpress');
-
         ob_start();
 
         remove_action('shutdown', 'wp_ob_end_flush_all', 1);
@@ -224,12 +232,49 @@ trait Bootable
 
         $response = $kernel->handle($request);
 
+        $response->headers->remove('cache-control');
+
+        add_action('send_headers', fn () => $response->sendHeaders(), 100);
+
         add_action('shutdown', function () use ($kernel, $request, $response) {
-            $response->send();
+            $response->sendContent();
+
+            if (function_exists('fastcgi_finish_request')) {
+                fastcgi_finish_request();
+            } elseif (function_exists('litespeed_finish_request')) {
+                litespeed_finish_request();
+            } elseif (! in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
+                Response::closeOutputBuffers(0, true);
+                flush();
+            }
 
             $kernel->terminate($request, $response);
 
             exit((int) $response->isServerError());
         }, 100);
+    }
+
+    /**
+     * Handle the request.
+     */
+    public function handleRequest(Request $request): void
+    {
+        $kernel = $this->make(HttpKernelContract::class);
+
+        $response = $kernel->handle($request);
+
+        $response->send();
+
+        $kernel->terminate($request, $response);
+
+        exit((int) $response->isServerError());
+    }
+
+    /**
+     * Retrieve the boot configuration.
+     */
+    public function getBootConfiguration(): array
+    {
+        return $this->bootConfiguration;
     }
 }

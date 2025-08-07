@@ -1010,6 +1010,67 @@
             "install-path": "../guzzlehttp/uri-template"
         },
         {
+            "name": "illuminate/auth",
+            "version": "v12.21.0",
+            "version_normalized": "12.21.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/illuminate/auth.git",
+                "reference": "ab4668e590a4d16b2943c5df1bc7a13514813702"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/illuminate/auth/zipball/ab4668e590a4d16b2943c5df1bc7a13514813702",
+                "reference": "ab4668e590a4d16b2943c5df1bc7a13514813702",
+                "shasum": ""
+            },
+            "require": {
+                "ext-hash": "*",
+                "illuminate/collections": "^12.0",
+                "illuminate/contracts": "^12.0",
+                "illuminate/http": "^12.0",
+                "illuminate/macroable": "^12.0",
+                "illuminate/queue": "^12.0",
+                "illuminate/support": "^12.0",
+                "php": "^8.2"
+            },
+            "suggest": {
+                "illuminate/console": "Required to use the auth:clear-resets command (^12.0).",
+                "illuminate/queue": "Required to fire login / logout events (^12.0).",
+                "illuminate/session": "Required to use the session based guard (^12.0)."
+            },
+            "time": "2025-07-11T14:57:00+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "12.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Illuminate\\Auth\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "The Illuminate Auth package.",
+            "homepage": "https://laravel.com",
+            "support": {
+                "issues": "https://github.com/laravel/framework/issues",
+                "source": "https://github.com/laravel/framework"
+            },
+            "install-path": "../illuminate/auth"
+        },
+        {
             "name": "illuminate/bus",
             "version": "v12.2.0",
             "version_normalized": "12.2.0.0",
@@ -3985,17 +4046,17 @@
         },
         {
             "name": "roots/acorn",
-            "version": "v5.0.1",
-            "version_normalized": "5.0.1.0",
+            "version": "v5.0.5",
+            "version_normalized": "5.0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/roots/acorn.git",
-                "reference": "8eac2257e48dcac64796b0dbd208044399121586"
+                "reference": "bc51c932b87fc35dd1c8dd6bacb3c31469fe5029"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/roots/acorn/zipball/8eac2257e48dcac64796b0dbd208044399121586",
-                "reference": "8eac2257e48dcac64796b0dbd208044399121586",
+                "url": "https://api.github.com/repos/roots/acorn/zipball/bc51c932b87fc35dd1c8dd6bacb3c31469fe5029",
+                "reference": "bc51c932b87fc35dd1c8dd6bacb3c31469fe5029",
                 "shasum": ""
             },
             "require": {
@@ -4003,6 +4064,7 @@
                 "ext-json": "*",
                 "ext-mbstring": "*",
                 "guzzlehttp/guzzle": "^7.8",
+                "illuminate/auth": "^12.0",
                 "illuminate/cache": "^12.0",
                 "illuminate/config": "^12.0",
                 "illuminate/console": "^12.0",
@@ -4048,7 +4110,7 @@
                 "roots/acorn-prettify": "A collection of modules to apply theme-agnostic front-end modifications (^1.0).",
                 "spatie/laravel-ignition": "A beautiful error page for development (^2.0)."
             },
-            "time": "2025-03-11T08:37:46+00:00",
+            "time": "2025-08-05T18:57:59+00:00",
             "bin": [
                 "bin/acorn"
             ],
@@ -4089,7 +4151,7 @@
             "support": {
                 "forum": "https://discourse.roots.io/",
                 "issues": "https://github.com/roots/acorn/issues",
-                "source": "https://github.com/roots/acorn/tree/v5.0.1"
+                "source": "https://github.com/roots/acorn/tree/v5.0.5"
             },
             "funding": [
                 {

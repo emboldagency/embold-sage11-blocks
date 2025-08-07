@@ -84,12 +84,7 @@ class Kernel extends FoundationConsoleKernel
             define('ARTISAN_BINARY', dirname(__DIR__, 4).'/bin/acorn');
         }
 
-        $this->app = $app;
-        $this->events = $events;
-
-        $this->app->booted(function () {
-            $this->resolveConsoleSchedule();
-        });
+        parent::__construct($app, $events);
     }
 
     /**
@@ -100,5 +95,9 @@ class Kernel extends FoundationConsoleKernel
     public function commands()
     {
         $this->load($this->app->path('Console/Commands'));
+
+        if (file_exists($routes = base_path('routes/console.php'))) {
+            require $routes;
+        }
     }
 }
