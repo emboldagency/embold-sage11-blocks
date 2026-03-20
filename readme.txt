@@ -3,7 +3,7 @@ Contributors: itsjsutxan, embold-tyler
 Tags: tailwind, blocks
 Requires at least: 6.0
 Tested up to: 6.2.2
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 Requires PHP: 8.0
 
 A collection of Tailwind Blocks for Sage 11 based themes. Requires Advanced Custom Fields PRO plugin to be enabled and activated.
@@ -20,6 +20,10 @@ the theme files take priority. You can do this with the Padding field, or any vi
 Please view the full README.md on GitHub.
 
 == Changelog ==
+
+= 0.1.2 =
+* Fix global-styles dependency warning thrown by CoreModifier on WP 6.9.1+
+* Remove duplicate nested repo clone
 
 = 0.1.0 =
 * Initial release to support Sage 11
