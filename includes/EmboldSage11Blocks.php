@@ -25,7 +25,7 @@ class EmboldSage11Blocks
 
     protected function createApplication()
     {
-        $app = new Application();
+        $app = new Application(\Roots\Acorn\Configuration\ApplicationBuilder::inferBasePath());
         $app->singleton('config', function () {
             return new ConfigRepository();
         });
