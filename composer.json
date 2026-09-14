@@ -1,7 +1,10 @@
 {
   "name": "embold/embold-sage11-blocks",
   "config": {
-    "autoloader-suffix": "embold_sage11_blocks"
+    "autoloader-suffix": "embold_sage11_blocks",
+    "platform": {
+      "php": "8.2.0"
+    }
   },
   "autoload": {
     "psr-4": {
