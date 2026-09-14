@@ -1,5 +1,8 @@
 {
   "name": "embold/embold-sage11-blocks",
+  "config": {
+    "autoloader-suffix": "embold_sage11_blocks"
+  },
   "autoload": {
     "psr-4": {
       "App\\": "includes/",
