@@ -21,6 +21,14 @@ Please view the full README.md on GitHub.
 
 == Changelog ==
 
+= 0.1.4 =
+* Fix compatibility and hardening for side-by-side plugin usage
+* Fix plugin enqueuing scripts from the wrong directory
+* Fix plugin registering duplicate update checker slug
+* Prefix global functions to avoid redeclaration collisions
+* Implement isolated Composer autoloaders
+
+
 = 0.1.3 =
 * Fix open_basedir warnings caused by base path inference falling back to the plugin's own directory
 * Deactivate the plugin with an admin notice when the active theme is not Sage 11/Acorn based
