@@ -9,7 +9,7 @@ on:
 
 jobs:
   dist:
-    uses: emboldagency/.github/.github/workflows/wp-release.yml@main
+    uses: emboldagency/.github/.github/workflows/wp-release.yml@master
     with:
       plugin_slug: 'embold-sage11-blocks'
       main_file: 'embold-sage11-blocks.php'
