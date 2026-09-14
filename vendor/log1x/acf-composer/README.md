@@ -4,20 +4,19 @@
 ![Total Downloads](https://img.shields.io/packagist/dt/log1x/acf-composer.svg?style=flat-square)
 ![Build Status](https://img.shields.io/github/actions/workflow/status/log1x/acf-composer/main.yml?branch=master&style=flat-square)
 
-ACF Composer is the ultimate tool for creating fields, blocks, widgets, and option pages using [ACF Builder](https://github.com/stoutlogic/acf-builder) alongside [Sage 10](https://github.com/roots/sage).
+ACF Composer is the ultimate tool for creating fields, blocks, widgets, and option pages using [ACF Builder](https://github.com/stoutlogic/acf-builder) alongside [Sage 10 and 11](https://github.com/roots/sage).
 
 ![Screenshot](https://i.imgur.com/7e7w3U9.png)
 
 ## Features
 
-- 🔥 Encourages clean structuring for creating fields with Sage 10 and ACF.
-- 🔥 Instantly generate working fields, blocks, widgets, and option pages. Batteries included.
-- 🔥 Instantly generate re-usable field group partials.
-- 🔥 Blocks and widgets are fully rendered using Blade with a native Sage 10 feel for passing view data.
-- 🔥 Blocks are automatically generated with `<InnerBlocks />` support.
-- 🔥 Automatically hooks widgets with `WP_Widget` making them instantly ready to use.
-- 🔥 Automatically sets field location on blocks, widgets, and option pages.
-- 🔥 Globally set default field type and field group settings. No more repeating `['ui' => 1]` on every select field.
+- 🔧 Encourages clean structuring for creating fields with Sage and ACF.
+- 🚀 Instantly generate working fields, blocks, widgets, partials, and option pages using CLI. Batteries included.
+- 🖼️ Fully rendered blocks and widgets using Blade with a native Sage feel for passing view data.
+- ⚡ Seamlessly [cache](#caching-blocks--fields) blocks to `block.json` and field groups to a manifest.
+- 📦 Automatically hooks legacy widgets with `WP_Widget` making them instantly ready to use.
+- 🛠️ Automatically sets field location on blocks, widgets, and option pages.
+- 🌐 Globally define default field type and field group settings. No more repeating `['ui' => 1]` on every select field.
 
 ## Requirements
 
@@ -43,17 +42,17 @@ Start by publishing the `config/acf.php` configuration file using Acorn:
 $ wp acorn vendor:publish --tag="acf-composer"
 ```
 
-### Generating a Field
+### Generating a Field Group
 
-To create your first field, start by running the following generator command from your theme directory:
+To create your first field group, start by running the following generator command from your theme directory:
 
 ```bash
-$ wp acorn acf:field Example
+$ wp acorn acf:field ExampleField
 ```
 
-This will create `src/Fields/Example.php` which is where you will create and manage your first field group.
+This will create `src/Fields/ExampleField.php` which is where you will create and manage your first field group.
 
-Taking a glance at the generated `Example.php` stub, you will notice that it has a simple list configured.
+Taking a glance at the generated `ExampleField.php` stub, you will notice that it has a simple list configured.
 
 ```php
 <?php
@@ -63,7 +62,7 @@ namespace App\Fields;
 use Log1x\AcfComposer\Builder;
 use Log1x\AcfComposer\Field;
 
-class Example extends Field
+class ExampleField extends Field
 {
     /**
      * The field group.
@@ -72,22 +71,32 @@ class Example extends Field
      */
     public function fields()
     {
-        $example = Builder::make('example');
+        $fields = Builder::make('example_field');
 
-        $example
+        $fields
             ->setLocation('post_type', '==', 'post');
 
-        $example
+        $fields
             ->addRepeater('items')
                 ->addText('item')
             ->endRepeater();
 
-        return $example->build();
+        return $fields->build();
     }
 }
 ```
 
-Proceed by checking the `Add Post` for the field to ensure things are working as intended – and then [get to work](https://github.com/Log1x/acf-builder-cheatsheet).
+Proceed by checking the `Add Post` for the field to ensure things are working as intended.
+
+### Field Builder Usage
+
+To assist with development, ACF Composer comes with a `usage` command that will let you search for registered field types. This will provide basic information about the field type as well as a usage example containing all possible options.
+
+```sh
+$ wp acorn acf:usage
+```
+
+For additional usage, you may consult the [ACF Builder Cheatsheet](https://github.com/Log1x/acf-builder-cheatsheet).
 
 ### Generating a Field Partial
 
@@ -116,14 +125,14 @@ class ListItems extends Partial
      */
     public function fields()
     {
-        $listItems = Builder::make('listItems');
+        $fields = Builder::make('listItems');
 
-        $listItems
+        $fields
             ->addRepeater('items')
                 ->addText('item')
             ->endRepeater();
 
-        return $listItems;
+        return $fields;
     }
 }
 ```
@@ -152,15 +161,15 @@ class Example extends Field
      */
     public function fields()
     {
-        $example = Builder::make('example');
+        $fields = Builder::make('example');
 
-        $example
+        $fields
             ->setLocation('post_type', '==', 'post');
 
-        $example
+        $fields
             ->addPartial(ListItems::class);
 
-        return $example->build();
+        return $fields->build();
     }
 }
 ```
@@ -172,7 +181,7 @@ Generating a block is generally the same as generating a field as seen above.
 Start by creating the block field using Acorn:
 
 ```bash
-$ wp acorn acf:block Example
+$ wp acorn acf:block ExampleBlock
 ```
 
 ```php
@@ -183,14 +192,14 @@ namespace App\Blocks;
 use Log1x\AcfComposer\Block;
 use Log1x\AcfComposer\Builder;
 
-class Example extends Block
+class ExampleBlock extends Block
 {
     /**
      * The block name.
      *
      * @var string
      */
-    public $name = 'Example';
+    public $name = 'Example Block';
 
     /**
      * The block description.
@@ -232,14 +241,14 @@ class Example extends Block
      */
     public function fields()
     {
-        $example = Builder::make('example');
+        $fields = Builder::make('example_block');
 
-        $example
+        $fields
             ->addRepeater('items')
                 ->addText('item')
             ->endRepeater();
 
-        return $example->build();
+        return $fields->build();
     }
 
     /**
@@ -254,10 +263,10 @@ class Example extends Block
 }
 ```
 
-You may also pass `--construct` to the command above to generate a stub with the block properties set within an `attributes` method. This can be useful for localization, etc.
+You may also pass `--localize` to the command above to generate a block stub with the name and description ready for translation.
 
 ```bash
-$ wp acorn acf:block Example --construct
+$ wp acorn acf:block Example --localize
 ```
 
 When running the block generator, one difference to a generic field is an accompanied `View` is generated in the `resources/views/blocks` directory.
@@ -298,7 +307,7 @@ Creating a sidebar widget using ACF Composer is extremely easy. Widgets are auto
 Start by creating a widget using Acorn:
 
 ```bash
-$ wp acorn acf:widget Example
+$ wp acorn acf:widget ExampleWidget
 ```
 
 ```php
@@ -309,14 +318,14 @@ namespace App\Widgets;
 use Log1x\AcfComposer\Builder;
 use Log1x\AcfComposer\Widget;
 
-class Example extends Widget
+class ExampleWidget extends Widget
 {
     /**
      * The widget name.
      *
      * @var string
      */
-    public $name = 'Example';
+    public $name = 'Example Widget';
 
     /**
      * The widget description.
@@ -353,17 +362,17 @@ class Example extends Widget
      */
     public function fields()
     {
-        $example = Builder::make('example');
+        $fields = Builder::make('example_widget');
 
-        $example
+        $fields
             ->addText('title');
 
-        $example
+        $fields
             ->addRepeater('items')
                 ->addText('item')
             ->endRepeater();
 
-        return $example->build();
+        return $fields->build();
     }
 
     /**
@@ -401,7 +410,7 @@ Creating an options page is similar to creating a regular field group in additio
 Start by creating an option page using Acorn:
 
 ```bash
-$ wp acorn acf:options Example
+$ wp acorn acf:options ExampleOptions
 ```
 
 ```php
@@ -412,21 +421,21 @@ namespace App\Options;
 use Log1x\AcfComposer\Builder;
 use Log1x\AcfComposer\Options as Field;
 
-class Example extends Field
+class ExampleOptions extends Field
 {
     /**
      * The option page menu name.
      *
      * @var string
      */
-    public $name = 'Example';
+    public $name = 'Example Options';
 
     /**
      * The option page document title.
      *
      * @var string
      */
-    public $title = 'Example | Options';
+    public $title = 'Example Options | Options';
 
     /**
      * The option page field group.
@@ -435,14 +444,14 @@ class Example extends Field
      */
     public function fields()
     {
-        $example = Builder::make('example');
+        $fields = Builder::make('example_options');
 
-        $example
+        $fields
             ->addRepeater('items')
                 ->addText('item')
             ->endRepeater();
 
-        return $example->build();
+        return $fields->build();
     }
 }
 ```
@@ -457,9 +466,16 @@ Once finished, you should see an Options page appear in the backend.
 
 All fields registered will have their location automatically set to this page.
 
-## Caching Fields
+## Caching Blocks & Fields
 
-Each time your application is ran, ACF Composer has to build your field groups into an array to register with ACF. In larger projects, it may be a good idea to cache the field groups into an array during deployment. This can be done using the `acf:cache` command:
+As of v3, ACF Composer now has the ability to cache registered blocks to native `block.json` files and field groups to a flat file JSON manifest automatically using CLI.
+
+This can lead to a **dramatic increase** in performance in projects both small and large, especially when loading a post in the editor containing multiple custom blocks.
+
+> [!NOTE]
+> Making changes to blocks or fields once cached will not take effect until cleared or re-cached.
+
+The best time to do this is during deployment and can be done using the `acf:cache` command:
 
 ```bash
 $ wp acorn acf:cache [--status]
@@ -470,6 +486,8 @@ Cache can then be cleared using the `acf:clear` command:
 ```bash
 $ wp acorn acf:clear
 ```
+
+The ACF Composer cache status can be found using `--status` on `acf:cache` as seen above or by running `wp acorn about`.
 
 ## Custom Stub Generation
 
@@ -483,7 +501,7 @@ The publish command generates all available stubs by default. However, each stub
 
 ## Default Field Settings
 
-One of my personal favorite features of ACF Composer is the ability to set field type as well as field group defaults. Any globally set default can of course be over-ridden by simply setting it on the individual field.
+A useful feature unique to ACF Composer is the ability to set field type as well as field group defaults. Any globally set default can of course be over-ridden by simply setting it on the individual field.
 
 ### Global
 

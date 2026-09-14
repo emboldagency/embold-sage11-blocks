@@ -3,10 +3,13 @@
 namespace Log1x\AcfComposer\Console;
 
 use Illuminate\Filesystem\Filesystem;
+use Log1x\AcfComposer\Concerns\HasCollection;
 use Roots\Acorn\Console\Commands\Command;
 
 class StubPublishCommand extends Command
 {
+    use HasCollection;
+
     /**
      * The name and signature of the console command.
      *
@@ -27,9 +30,10 @@ class StubPublishCommand extends Command
      * @var array
      */
     protected $stubs = [
-        'block.construct.stub',
+        'block.localized.stub',
         'block.stub',
         'field.stub',
+        'options.localized.stub',
         'options.full.stub',
         'options.stub',
         'partial.stub',
@@ -46,14 +50,14 @@ class StubPublishCommand extends Command
     public function handle()
     {
         if (! is_dir($stubsPath = $this->app->basePath('stubs/acf-composer'))) {
-            (new Filesystem())->makeDirectory($stubsPath, 0755, true);
+            (new Filesystem)->makeDirectory($stubsPath, 0755, true);
         }
 
         if (! is_dir($stubsPath.'/views')) {
-            (new Filesystem())->makeDirectory($stubsPath.'/views', 0755, true);
+            (new Filesystem)->makeDirectory($stubsPath.'/views', 0755, true);
         }
 
-        $files = collect($this->stubs)
+        $files = $this->collect($this->stubs)
             ->mapWithKeys(function ($stub) use ($stubsPath) {
                 return [__DIR__.'/stubs/'.$stub => $stubsPath.'/'.$stub];
             })->toArray();

@@ -11,6 +11,7 @@ use Log1x\AcfComposer\Builder\FlexibleContentBuilder;
 use Log1x\AcfComposer\Builder\GroupBuilder;
 use Log1x\AcfComposer\Builder\RepeaterBuilder;
 use Log1x\AcfComposer\Builder\TabBuilder;
+use Log1x\AcfComposer\Concerns\HasCollection;
 use ReflectionClass;
 use StoutLogic\AcfBuilder\FieldsBuilder;
 use StoutLogic\AcfBuilder\LocationBuilder;
@@ -23,6 +24,7 @@ use StoutLogic\AcfBuilder\LocationBuilder;
  * @method Builder endFlexibleContent()
  * @method Builder endGroup()
  * @method Builder endRepeater()
+ * @method Builder modifyField(string $name, array|\Closure $modify)
  * @method ChoiceFieldBuilder addButtonGroup(string $name, array $args = [])
  * @method ChoiceFieldBuilder addCheckbox(string $name, array $args = [])
  * @method ChoiceFieldBuilder addChoiceField(string $name, string $type, array $args = [])
@@ -43,7 +45,8 @@ use StoutLogic\AcfBuilder\LocationBuilder;
  * @method FieldBuilder addNumber(string $name, array $args = [])
  * @method FieldBuilder addOembed(string $name, array $args = [])
  * @method FieldBuilder addPageLink(string $name, array $args = [])
- * @method FieldBuilder addPartial(string $partial)
+ * @method FieldBuilder addPartial(string $partial, array $args = [])
+ * @method FieldBuilder addPartials(array $partials)
  * @method FieldBuilder addPassword(string $name, array $args = [])
  * @method FieldBuilder addPostObject(string $name, array $args = [])
  * @method FieldBuilder addRange(string $name, array $args = [])
@@ -65,6 +68,8 @@ use StoutLogic\AcfBuilder\LocationBuilder;
  */
 class Builder extends FieldsBuilder
 {
+    use HasCollection;
+
     /**
      * The ACF Composer instance.
      */
@@ -86,14 +91,14 @@ class Builder extends FieldsBuilder
     /**
      * Add a partial to the field group.
      */
-    public function addPartial(string $partial): self
+    public function addPartial(string $partial, array $args = []): self
     {
         if (
             is_string($partial) &&
             is_subclass_of($partial, Partial::class) &&
             ! (new ReflectionClass($partial))->isAbstract()
         ) {
-            $partial = $partial::make($this->composer())->compose();
+            $partial = $partial::make($this->composer())->compose($args);
         }
 
         if (! is_a($partial, FieldsBuilder::class)) {
@@ -101,6 +106,21 @@ class Builder extends FieldsBuilder
         }
 
         return $this->addFields($partial);
+    }
+
+    /**
+     * Add multiple partials to the field group.
+     */
+    public function addPartials(array $partials): self
+    {
+        foreach ($partials as $key => $value) {
+            $partial = is_string($value) ? $value : $key;
+            $args = is_array($value) ? $value : [];
+
+            $this->addPartial($partial, $args);
+        }
+
+        return $this;
     }
 
     /**
@@ -114,7 +134,7 @@ class Builder extends FieldsBuilder
 
         $types = config('acf.types', []);
 
-        return $this->types = collect($types)->mapWithKeys(fn ($type, $key) => [
+        return $this->types = $this->collect($types)->mapWithKeys(fn ($type, $key) => [
             Str::of($key)->studly()->start('add')->toString() => $type,
         ])->all();
     }
@@ -178,7 +198,7 @@ class Builder extends FieldsBuilder
      * Add a group field.
      *
      * @param  string  $name
-     * @return \Log1x\AcfComposer\Builder\GroupBuilder
+     * @return GroupBuilder
      */
     public function addGroup($name, array $args = [])
     {
@@ -189,7 +209,7 @@ class Builder extends FieldsBuilder
      * Add a repeater field.
      *
      * @param  string  $name
-     * @return \Log1x\AcfComposer\Builder\RepeaterBuilder
+     * @return RepeaterBuilder
      */
     public function addRepeater($name, array $args = [])
     {
@@ -200,7 +220,7 @@ class Builder extends FieldsBuilder
      * Add a flexible content field.
      *
      * @param  string  $name
-     * @return \Log1x\AcfComposer\Builder\FlexibleContentBuilder
+     * @return FlexibleContentBuilder
      */
     public function addFlexibleContent($name, array $args = [])
     {
@@ -211,7 +231,7 @@ class Builder extends FieldsBuilder
      * Add a tab field.
      *
      * @param  string  $label
-     * @return \Log1x\AcfComposer\Builder\TabBuilder
+     * @return TabBuilder
      */
     public function addTab($label, array $args = [])
     {
@@ -222,7 +242,7 @@ class Builder extends FieldsBuilder
      * Add an accordion field.
      *
      * @param  string  $label
-     * @return \Log1x\AcfComposer\Builder\AccordionBuilder
+     * @return AccordionBuilder
      */
     public function addAccordion($label, array $args = [])
     {
@@ -234,7 +254,7 @@ class Builder extends FieldsBuilder
      *
      * @param  string  $name
      * @param  string  $type
-     * @return \Log1x\AcfComposer\Builder\ChoiceFieldBuilder
+     * @return ChoiceFieldBuilder
      */
     public function addChoiceField($name, $type, array $args = [])
     {

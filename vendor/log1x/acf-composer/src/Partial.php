@@ -2,18 +2,21 @@
 
 namespace Log1x\AcfComposer;
 
+use StoutLogic\AcfBuilder\FieldsBuilder;
+
 abstract class Partial extends Composer
 {
     /**
      * Compose and register the defined field groups with ACF.
      *
-     * @return mixed
+     * @param  array  $args  Optional arguments to pass to the partial.
+     * @return FieldsBuilder|void
      */
-    public function compose()
+    public function compose(array $args = [])
     {
-        $fields = $this->fields();
+        $fields = $this->resolveFields($args);
 
-        if (empty($fields)) {
+        if (blank($fields)) {
             return;
         }
 

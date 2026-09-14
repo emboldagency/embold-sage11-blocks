@@ -3,6 +3,8 @@
 namespace Log1x\AcfComposer\Builder;
 
 use Log1x\AcfComposer\Builder;
+use Log1x\AcfComposer\Partial;
+use ReflectionClass;
 use StoutLogic\AcfBuilder\FieldsBuilder;
 use StoutLogic\AcfBuilder\FlexibleContentBuilder as FieldBuilder;
 
@@ -12,6 +14,7 @@ use StoutLogic\AcfBuilder\FlexibleContentBuilder as FieldBuilder;
  * @method Builder endFlexibleContent()
  * @method Builder endGroup()
  * @method Builder endRepeater()
+ * @method Builder modifyField(string $name, array|\Closure $modify)
  * @method ChoiceFieldBuilder addButtonGroup(string $name, array $args = [])
  * @method ChoiceFieldBuilder addCheckbox(string $name, array $args = [])
  * @method ChoiceFieldBuilder addChoiceField(string $name, string $type, array $args = [])
@@ -32,7 +35,8 @@ use StoutLogic\AcfBuilder\FlexibleContentBuilder as FieldBuilder;
  * @method FieldBuilder addNumber(string $name, array $args = [])
  * @method FieldBuilder addOembed(string $name, array $args = [])
  * @method FieldBuilder addPageLink(string $name, array $args = [])
- * @method FieldBuilder addPartial(string $partial)
+ * @method FieldBuilder addPartial(string $partial, array $args = [])
+ * @method FieldBuilder addPartials(array $partials)
  * @method FieldBuilder addPassword(string $name, array $args = [])
  * @method FieldBuilder addPostObject(string $name, array $args = [])
  * @method FieldBuilder addRange(string $name, array $args = [])
@@ -59,10 +63,18 @@ class FlexibleContentBuilder extends FieldBuilder
      *
      * @param  string|FieldsBuilder  $layout
      * @param  array  $args
-     * @return \Log1x\AcfComposer\Builder
+     * @return Builder
      */
     public function addLayout($layout, $args = [])
     {
+        if (
+            is_string($layout) &&
+            is_subclass_of($layout, Partial::class) &&
+            ! (new ReflectionClass($layout))->isAbstract()
+        ) {
+            $layout = $layout::make($this->composer())->compose();
+        }
+
         $layout = is_a($layout, FieldsBuilder::class)
             ? clone $layout
             : Builder::make($layout, $args);

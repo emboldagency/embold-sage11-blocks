@@ -4,9 +4,12 @@ namespace Log1x\AcfComposer\Console;
 
 use Illuminate\Console\Command;
 use Log1x\AcfComposer\AcfComposer;
+use Log1x\AcfComposer\Concerns\HasCollection;
 
 class CacheCommand extends Command
 {
+    use HasCollection;
+
     /**
      * The name and signature of the console command.
      *
@@ -54,7 +57,7 @@ class CacheCommand extends Command
             return $this->components->info("<fg=blue>ACF Composer</> is currently {$status}.");
         }
 
-        $composers = collect(
+        $composers = $this->collect(
             $this->composer->composers()
         )->flatten();
 
@@ -81,5 +84,15 @@ class CacheCommand extends Command
             : 0;
 
         $this->components->info("Successfully cached <fg=blue>{$manifest}</> field group(s) and <fg=blue>{$blocks}</> block(s).");
+    }
+
+    /**
+     * Configure the command.
+     */
+    public function configure(): void
+    {
+        $this->setAliases([
+            'acf:optimize',
+        ]);
     }
 }
