@@ -22,17 +22,24 @@ class DummyClass extends Field
     public $title = 'DummyTitle | Options';
 
     /**
+     * The option page menu position.
+     *
+     * @var int
+     */
+    public $position = PHP_INT_MAX;
+
+    /**
      * The option page field group.
      */
     public function fields(): array
     {
-        $DummyCamel = Builder::make('DummySnake');
+        $fields = Builder::make('DummySnake');
 
-        $DummyCamel
+        $fields
             ->addRepeater('items')
                 ->addText('item')
             ->endRepeater();
 
-        return $DummyCamel->build();
+        return $fields->build();
     }
 }

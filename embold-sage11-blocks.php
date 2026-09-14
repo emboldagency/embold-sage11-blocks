@@ -15,15 +15,10 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-// Load the autoloader
-require_once plugin_dir_path(__FILE__).'vendor/autoload.php';
-
-// Include the main plugin class
-require_once plugin_dir_path(__FILE__).'includes/EmboldSage11Blocks.php';
 
 include_once ABSPATH.'wp-admin/includes/plugin.php';
 
-function acorn_version_warning_notice()
+function embold_sage11_blocks_acorn_version_warning_notice()
 {
     ?>
     <div class="notice notice-warning">
@@ -32,7 +27,7 @@ function acorn_version_warning_notice()
     <?php
 }
 
-function acf_composer_version_warning_notice()
+function embold_sage11_blocks_acf_composer_version_warning_notice()
 {
     ?>
     <div class="notice notice-warning">
@@ -41,7 +36,7 @@ function acf_composer_version_warning_notice()
     <?php
 }
 
-function sage_theme_warning_notice()
+function embold_sage11_blocks_sage_theme_warning_notice()
 {
     ?>
     <div class="notice notice-warning">
@@ -50,7 +45,7 @@ function sage_theme_warning_notice()
     <?php
 }
 
-function acf_pro_warning_notice()
+function embold_sage11_blocks_acf_pro_warning_notice()
 {
     ?>
     <div class="notice notice-warning">
@@ -63,13 +58,16 @@ function acf_pro_warning_notice()
 if (! is_plugin_active('advanced-custom-fields/acf.php') && ! is_plugin_active('advanced-custom-fields-pro/acf.php')) {
     // Deactivate the plugin
     deactivate_plugins(plugin_basename(__FILE__));
+        if (isset($_GET['activate'])) {
+            unset($_GET['activate']);
+        }
 
-    add_action('admin_notices', 'acf_pro_warning_notice');
+    add_action('admin_notices', 'embold_sage11_blocks_acf_pro_warning_notice');
 
     return;
 }
 
-function interpretComposerVersion($version)
+function embold_sage11_blocks_interpretComposerVersion($version)
 {
     // Check if the version starts with ^ or ~, which are common in composer.json, and remove them
     // This is a simplistic approach and does not fully replicate Composer's version resolution
@@ -129,45 +127,52 @@ function embold_sage11_blocks_theme_is_sage()
     return isset($composer_data['require']['roots/acorn']);
 }
 
-function check_theme_acorn_version()
+function embold_sage11_blocks_check_theme_acorn_version()
 {
     $composer_data = embold_sage11_blocks_theme_composer_data();
 
     // The active theme isn't Sage based, so the plugin has nothing to attach to
     if (! embold_sage11_blocks_theme_is_sage()) {
         deactivate_plugins(plugin_basename(__FILE__));
+        if (isset($_GET['activate'])) {
+            unset($_GET['activate']);
+        }
 
-        add_action('admin_notices', 'sage_theme_warning_notice');
+        add_action('admin_notices', 'embold_sage11_blocks_sage_theme_warning_notice');
 
         return;
     }
 
-    $acorn_version = interpretComposerVersion($composer_data['require']['roots/acorn']);
+    $acorn_version = embold_sage11_blocks_interpretComposerVersion($composer_data['require']['roots/acorn']);
 
     // Check if the Acorn version is v3 or v4
-    if (version_compare($acorn_version, '4.0.0', '<')) {
-        // Acorn version is v3, deactivate the plugin
+    if (version_compare($acorn_version, '5.0.0', '<')) {
         deactivate_plugins(plugin_basename(__FILE__));
-
-        // Display a warning message
-        add_action('admin_notices', 'acorn_version_warning_notice');
+        if (isset($_GET['activate'])) {
+            unset($_GET['activate']);
+        }
+        add_action('admin_notices', 'embold_sage11_blocks_acorn_version_warning_notice');
+        return;
     }
 
     if (isset($composer_data['require']['log1x/acf-composer'])) {
-        $acf_composer_version = interpretComposerVersion($composer_data['require']['log1x/acf-composer']);
+        $acf_composer_version = embold_sage11_blocks_interpretComposerVersion($composer_data['require']['log1x/acf-composer']);
 
         // Check if the ACF Composer version is v2 or lower
         if (version_compare($acf_composer_version, '3.0.0', '<')) {
             // Deactivate the plugin
             deactivate_plugins(plugin_basename(__FILE__));
+        if (isset($_GET['activate'])) {
+            unset($_GET['activate']);
+        }
 
             // Display a warning message
-            add_action('admin_notices', 'acf_composer_version_warning_notice');
+            add_action('admin_notices', 'embold_sage11_blocks_acf_composer_version_warning_notice');
         }
     }
 }
 
-add_action('admin_init', 'check_theme_acorn_version');
+add_action('admin_init', 'embold_sage11_blocks_check_theme_acorn_version');
 
 require 'plugin-update-checker/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
@@ -175,7 +180,7 @@ use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 $embold_update_checker = PucFactory::buildUpdateChecker(
     'https://github.com/emboldagency/embold-sage11-blocks/',
     __FILE__,
-    'embold-tailwind-blocks'
+    'embold-sage11-blocks'
 );
 
 // Set to use GitHub Releases
@@ -189,6 +194,18 @@ function embold_sage11_blocks_init()
     if (! embold_sage11_blocks_theme_is_sage()) {
         return;
     }
+    
+    $composer_data = embold_sage11_blocks_theme_composer_data();
+    $acorn_version = embold_sage11_blocks_interpretComposerVersion($composer_data['require']['roots/acorn']);
+    if (version_compare($acorn_version, '5.0.0', '<')) {
+        return;
+    }
+
+    // Load the autoloader
+    require_once plugin_dir_path(__FILE__).'vendor/autoload.php';
+
+    // Include the main plugin class
+    require_once plugin_dir_path(__FILE__).'includes/EmboldSage11Blocks.php';
 
     // Create an instance of your plugin class
     $plugin = new \App\EmboldSage11Blocks();

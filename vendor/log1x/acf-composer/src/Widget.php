@@ -71,11 +71,9 @@ abstract class Widget extends Composer implements WidgetContract
         }
 
         $this->register(function () {
-            $this->widget = (object) collect(
+            $this->widget = (object) $this->collect(
                 Arr::get($GLOBALS, 'wp_registered_widgets')
-            )->filter(function ($value) {
-                return $value['name'] === $this->name;
-            })->pop();
+            )->filter(fn ($value) => $value['name'] === $this->name)->pop();
         });
 
         add_filter('widgets_init', function () {
@@ -86,24 +84,25 @@ abstract class Widget extends Composer implements WidgetContract
     }
 
     /**
-     * Returns an instance of WP_Widget used to register the widget.
-     *
-     * @return WP_Widget
+     * Determine if the widget should be displayed.
      */
-    protected function widget()
+    public function show(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Create a new WP_Widget instance.
+     */
+    protected function widget(): WP_Widget
     {
         return new class($this) extends WP_Widget
         {
             /**
              * Create a new WP_Widget instance.
-             *
-             * @param  \Log1x\AcfComposer\Widget  $composer
-             * @return void
              */
-            public function __construct($composer)
+            public function __construct(public Widget $composer)
             {
-                $this->composer = $composer;
-
                 parent::__construct(
                     $this->composer->slug,
                     $this->composer->name,
@@ -122,10 +121,14 @@ abstract class Widget extends Composer implements WidgetContract
             {
                 $this->composer->id = $this->composer->widget->id = Str::start($args['widget_id'], 'widget_');
 
+                if (! $this->composer->show()) {
+                    return;
+                }
+
                 echo Arr::get($args, 'before_widget');
 
                 if (! empty($this->composer->title())) {
-                    echo collect([
+                    echo $this->composer->collect([
                         Arr::get($args, 'before_title'),
                         $this->composer->title(),
                         Arr::get($args, 'after_title'),

@@ -1,0 +1,47 @@
+<?php
+
+namespace DummyNamespace;
+
+use Log1x\AcfComposer\Builder;
+use Log1x\AcfComposer\Options as Field;
+
+class DummyClass extends Field
+{
+    /**
+     * Retrieve the option page menu name.
+     */
+    public function getName(): string
+    {
+        return __('DummyTitle', 'sage');
+    }
+
+    /**
+     * Retrieve the option page document title.
+     */
+    public function getTitle(): string
+    {
+        return __('DummyTitle', 'sage');
+    }
+
+    /**
+     * The option page menu position.
+     *
+     * @var int
+     */
+    public $position = PHP_INT_MAX;
+
+    /**
+     * The option page field group.
+     */
+    public function fields(): array
+    {
+        $fields = Builder::make('DummySnake');
+
+        $fields
+            ->addRepeater('items')
+                ->addText('item')
+            ->endRepeater();
+
+        return $fields->build();
+    }
+}

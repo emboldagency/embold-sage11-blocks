@@ -19,14 +19,14 @@ class DummyClass extends Block
      *
      * @var string
      */
-    public $description = 'A simple DummyTitle block.';
+    public $description = 'DummyDescription';
 
     /**
      * The block category.
      *
      * @var string
      */
-    public $category = 'formatting';
+    public $category = 'DummyCategory';
 
     /**
      * The block icon.
@@ -47,7 +47,7 @@ class DummyClass extends Block
      *
      * @var array
      */
-    public $post_types = [];
+    public $post_types = [DummyPostTypes];
 
     /**
      * The parent block type allow list.
@@ -92,24 +92,22 @@ class DummyClass extends Block
     public $align_content = '';
 
     /**
+     * The default block spacing.
+     *
+     * @var array
+     */
+    public $spacing = [
+        'padding' => null,
+        'margin' => null,
+    ];
+
+    /**
      * The supported block features.
      *
      * @var array
      */
     public $supports = [
-        'align' => true,
-        'align_text' => false,
-        'align_content' => false,
-        'full_height' => false,
-        'anchor' => false,
-        'mode' => false,
-        'multiple' => true,
-        'jsx' => true,
-        'color' => [
-            'background' => true,
-            'text' => true,
-            'gradient' => true,
-        ],
+        DummySupports
     ];
 
     /**
@@ -143,6 +141,13 @@ class DummyClass extends Block
     ];
 
     /**
+     * Enable inline editing for block fields.
+     *
+     * @var bool|null
+     */
+    public $autoInlineEditing = null;
+
+    /**
      * Data to be passed to the block before rendering.
      */
     public function with(): array
@@ -157,14 +162,14 @@ class DummyClass extends Block
      */
     public function fields(): array
     {
-        $DummyCamel = Builder::make('DummySnake');
+        $fields = Builder::make('DummySnake');
 
-        $DummyCamel
+        $fields
             ->addRepeater('items')
                 ->addText('item')
             ->endRepeater();
 
-        return $DummyCamel->build();
+        return $fields->build();
     }
 
     /**
@@ -178,7 +183,9 @@ class DummyClass extends Block
     }
 
     /**
-     * Assets enqueued when rendering the block.
+     * Assets enqueued with 'enqueue_block_assets' when rendering the block.
+     *
+     * @link https://developer.wordpress.org/block-editor/how-to-guides/enqueueing-assets-in-the-editor/#editor-content-scripts-and-styles
      */
     public function assets(array $block): void
     {

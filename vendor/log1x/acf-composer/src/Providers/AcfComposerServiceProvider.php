@@ -18,6 +18,10 @@ class AcfComposerServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('AcfComposer', fn () => AcfComposer::make($this->app));
+
+        if (! defined('PWP_NAME')) {
+            define('PWP_NAME', 'ACF Composer');
+        }
     }
 
     /**
@@ -31,6 +35,7 @@ class AcfComposerServiceProvider extends ServiceProvider
             __DIR__.'/../../config/acf.php' => $this->app->configPath('acf.php'),
         ], 'acf-composer');
 
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'acf-composer');
         $this->mergeConfigFrom(__DIR__.'/../../config/acf.php', 'acf');
 
         $composer = $this->app->make('AcfComposer');
@@ -48,6 +53,7 @@ class AcfComposerServiceProvider extends ServiceProvider
                 Console\PartialMakeCommand::class,
                 Console\StubPublishCommand::class,
                 Console\UpgradeCommand::class,
+                Console\UsageCommand::class,
                 Console\WidgetMakeCommand::class,
             ]);
 
@@ -56,6 +62,14 @@ class AcfComposerServiceProvider extends ServiceProvider
                     'Status' => $composer->manifest()->exists() ? '<fg=green;options=bold>CACHED</>' : '<fg=yellow;options=bold>NOT CACHED</>',
                     'Version' => InstalledVersions::getPrettyVersion('log1x/acf-composer'),
                 ]);
+            }
+
+            if (method_exists($this, 'optimizes')) {
+                $this->optimizes(
+                    optimize: 'acf:cache',
+                    clear: 'acf:clear',
+                    key: 'acf-composer',
+                );
             }
         }
     }

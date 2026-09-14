@@ -48,10 +48,12 @@ abstract class CustomBlock extends Block
 
                 $enqueue_js_file = get_template_directory_uri() . '/public/' . $manifest_key;
             } else {
-                $enqueue_js_file = plugins_url("embold-tailwind-blocks/resources/scripts/blocks/{$this->slug}.js");
+                $enqueue_js_file = plugins_url("embold-sage11-blocks/resources/scripts/blocks/{$this->slug}.js");
             }
 
-            wp_enqueue_script("embold-tailwind-blocks-{$this->slug}-js", $enqueue_js_file, [], '1.0', true);
+            if ($enqueue_js_file) {
+                wp_enqueue_script("embold-sage11-blocks-{$this->slug}-js", $enqueue_js_file, [], '1.0', true);
+            }
         }
     }
 
