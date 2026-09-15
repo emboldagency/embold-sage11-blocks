@@ -186,6 +186,10 @@ $embold_update_checker = PucFactory::buildUpdateChecker(
 // Set to use GitHub Releases
 $embold_update_checker->getVcsApi()->enableReleaseAssets();
 
+if (file_exists($composer = plugin_dir_path(__FILE__) . 'vendor/autoload.php')) {
+    require_once $composer;
+}
+
 // Plugin initialization
 function embold_sage11_blocks_init()
 {
@@ -200,9 +204,6 @@ function embold_sage11_blocks_init()
     if (version_compare($acorn_version, '5.0.0', '<')) {
         return;
     }
-
-    // Load the autoloader
-    require_once plugin_dir_path(__FILE__).'vendor/autoload.php';
 
     // Include the main plugin class
     require_once plugin_dir_path(__FILE__).'includes/EmboldSage11Blocks.php';
