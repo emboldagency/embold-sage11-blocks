@@ -21,6 +21,9 @@ Please view the full README.md on GitHub.
 
 == Changelog ==
 
+= 0.1.6 =
+* Fix: resolve dependency collision and initialization race conditions
+
 = 0.1.5 =
 * Internal: Upgraded deployment pipeline to generate checksum-compliant release zips.
 
