@@ -21,6 +21,9 @@ Please view the full README.md on GitHub.
 
 == Changelog ==
 
+= 0.1.5 =
+* Internal: Upgraded deployment pipeline to generate checksum-compliant release zips.
+
 = 0.1.4 =
 * Fix compatibility and hardening for side-by-side plugin usage
 * Fix plugin enqueuing scripts from the wrong directory
