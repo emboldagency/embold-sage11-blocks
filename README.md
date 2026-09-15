@@ -206,3 +206,18 @@ Configure the class and the view in a customizable format, ideally something tha
 of images, add an image field where applicable so this can be changed per theme.
 
 **Registering your block** is done inside of `includes/InitBlocks.php` by adding additional blocks to the `$block_classes` array in the `initialize` method.
+
+## Installation via Git Clone
+
+If installing directly via `git clone` (instead of using the release ZIP), you must clean up development files after cloning so WP Haven can verify checksums.
+
+From the `wp-content/plugins` directory:
+
+```bash
+git clone git@github.com:emboldagency/embold-sage11-blocks.git
+cd embold-sage11-blocks
+bash bin/clean-dist.sh --yes
+wp plugin activate embold-sage11-blocks
+```
+
+**Note**: `bin/clean-dist.sh` strips all dev-only files (including `.git`) listed in `.distignore`. As a safeguard, it refuses to run if it detects uncommitted or unpushed changes. Run without arguments for a dry-run preview, or add `--force` to explicitly override the safeguard.
