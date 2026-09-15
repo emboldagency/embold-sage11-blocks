@@ -21,6 +21,9 @@ Please view the full README.md on GitHub.
 
 == Changelog ==
 
+= 0.1.7 =
+* Version bump to fix WP version comparison downgrade warning
+
 = 0.1.6 =
 * Fix: resolve dependency collision and initialization race conditions
 
