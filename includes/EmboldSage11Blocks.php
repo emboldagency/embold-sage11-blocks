@@ -2,9 +2,7 @@
 
 namespace App;
 
-use Illuminate\Config\Repository as ConfigRepository;
 use Log1x\AcfComposer\AcfComposer;
-use Roots\Acorn\Application;
 
 class EmboldSage11Blocks
 {
@@ -15,24 +13,13 @@ class EmboldSage11Blocks
     public function __construct()
     {
         // Initialize the application
-        $this->app = $this->createApplication();
+        $this->app = \Roots\app();
 
         $this->composer = new AcfComposer($this->app);
 
         // Auto-load blocks
         add_action('acf/init', [$this, 'init']);
     }
-
-    protected function createApplication()
-    {
-        $app = new Application(\Roots\Acorn\Configuration\ApplicationBuilder::inferBasePath());
-        $app->singleton('config', function () {
-            return new ConfigRepository();
-        });
-
-        return $app;
-    }
-
     public function init()
     {
         InitOptions::initialize();

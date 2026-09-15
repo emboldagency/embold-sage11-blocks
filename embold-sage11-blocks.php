@@ -208,6 +208,10 @@ function embold_sage11_blocks_init()
     require_once plugin_dir_path(__FILE__).'includes/EmboldSage11Blocks.php';
 
     // Create an instance of your plugin class
+    if (!function_exists('\Roots\app')) {
+        return;
+    }
+
     $plugin = new \App\EmboldSage11Blocks();
 
     // Insert the block category
@@ -219,4 +223,4 @@ function embold_sage11_blocks_init()
     $plugin->registerModifiers();
 }
 
-add_action('plugins_loaded', 'embold_sage11_blocks_init');
+add_action('after_setup_theme', 'embold_sage11_blocks_init', 100);
